@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zynqora - Digital Innovation Agency</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#0a0a0f;
+  --accent:#00e5ff;
+  --accent2:#7c3aed;
+  --accent3:#06ffa5;
+  --text:#e8eaf0;
+  --muted:#8892a4;
+  --card-bg:#111827;
+  --border:#1e293b;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--primary);color:var(--text);overflow-x:hidden}
+
+/* NAVBAR */
+nav{position:fixed;top:0;width:100%;z-index:1000;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,15,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:500;transition:color .3s;letter-spacing:.5px}
+.nav-links a:hover{color:var(--accent)}
+.nav-cta{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;border:none;padding:.6rem 1.4rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:.85rem;cursor:pointer;transition:opacity .3s,transform .2s;text-decoration:none;display:inline-block}
+.nav-cta:hover{opacity:.85;transform:translateY(-1px)}
+
+/* HAMBURGER */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
+.hamburger span{display:block;width:24px;height:2px;background:var(--text);transition:all .3s}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mobile-menu{display:none;position:fixed;top:65px;left:0;width:100%;background:rgba(10,10,15,0.98);border-bottom:1px solid var(--border);z-index:999;padding:1.5rem 2rem;flex-direction:column;gap:1.2rem}
+.mobile-menu.open{display:flex}
+.mobile-menu a{color:var(--muted);text-decoration:none;font-size:1rem;font-weight:500;transition:color .3s;padding:.4rem 0;border-bottom:1px solid var(--border)}
+.mobile-menu a:hover{color:var(--accent)}
+.mobile-menu .nav-cta{margin-top:.5rem;text-align:center;border-radius:8px}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.04) 1px,transparent 1px);background-size:60px 60px;animation:gridMove 20s linear infinite}
+@keyframes gridMove{0%{background-position:0 0}100%{background-position:60px 60px}}
+.hero-glow{position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(124,58,237,0.15) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:pulseGlow 4s ease-in-out infinite}
+.hero-glow2{position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(0,229,255,0.1) 0%,transparent 70%);top:30%;left:20%;animation:pulseGlow 6s ease-in-out infinite reverse}
+@keyframes pulseGlow{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.1)}}
+.badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.25);padding:.4rem 1.2rem;border-radius:50px;font-size:.8rem;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:1.5rem;animation:fadeUp .8s ease forwards}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 1.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.5rem,6vw,5rem);font-weight:800;line-height:1.1;margin-bottom:1.5rem;animation:fadeUp .8s .2s ease both}
+.hero h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{max-width:600px;color:var(--muted);font-size:1.1rem;line-height:1.7;margin-bottom:1.5rem;animation:fadeUp .8s .4s ease both}
+.platform-badges{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem;animation:fadeUp .8s .5s ease both}
+.platform-badge{display:flex;align-items:center;gap:.5rem;background:rgba(255,255,255,0.05);border:1px solid var(--border);padding:.45rem 1rem;border-radius:50px;font-size:.82rem;font-weight:500;color:var(--text)}
+.platform-badge .dot{width:8px;height:8px;border-radius:50%}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;animation:fadeUp .8s .6s ease both}
+.btn-primary{background:linear-gradient(135deg,var(--accent2),#4f46e5);color:#fff;border:none;padding:.85rem 2rem;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:1rem;cursor:pointer;transition:transform .2s,box-shadow .3s;text-decoration:none;display:inline-block}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 15px 40px rgba(124,58,237,0.4)}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border);padding:.85rem 2rem;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:1rem;cursor:pointer;transition:border-color .3s,transform .2s;text-decoration:none;display:inline-block}
+.btn-secondary:hover{border-color:var(--accent);transform:translateY(-3px)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.hero-stats{display:flex;gap:3rem;margin-top:4rem;animation:fadeUp .8s .8s ease both;flex-wrap:wrap;justify-content:center}
+.stat-item{text-align:center}
+.stat-num{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--accent)}
+.stat-label{color:var(--muted);font-size:.85rem;margin-top:.2rem}
+
+/* MARQUEE */
+.marquee-wrap{padding:1.5rem 0;background:linear-gradient(90deg,var(--primary),rgba(124,58,237,0.05),var(--primary));border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;white-space:nowrap}
+.marquee-track{display:inline-flex;gap:3rem;animation:marquee 25s linear infinite}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.marquee-item{display:inline-flex;align-items:center;gap:.5rem;color:var(--muted);font-size:.9rem;font-weight:500}
+.marquee-dot{color:var(--accent);font-size:1.2rem}
+
+/* SECTIONS */
+section{padding:6rem 2rem;max-width:1200px;margin:0 auto}
+.section-tag{display:inline-block;color:var(--accent);font-size:.8rem;text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:1rem}
+.section-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.2;margin-bottom:1rem}
+.section-sub{color:var(--muted);max-width:560px;line-height:1.7;margin-bottom:3rem}
+
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem}
+.service-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:2rem;position:relative;overflow:hidden;transition:transform .3s,border-color .3s;cursor:default}
+.service-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;border-radius:inherit}
+.service-card:hover{transform:translateY(-6px);border-color:var(--accent)}
+.service-card:hover::before{opacity:1}
+.service-card:nth-child(1)::before{background:linear-gradient(135deg,rgba(0,229,255,0.06),transparent)}
+.service-card:nth-child(2)::before{background:linear-gradient(135deg,rgba(124,58,237,0.06),transparent)}
+.service-card:nth-child(3)::before{background:linear-gradient(135deg,rgba(6,255,165,0.06),transparent)}
+.service-card:nth-child(4)::before{background:linear-gradient(135deg,rgba(251,113,133,0.06),transparent)}
+.service-card:nth-child(5)::before{background:linear-gradient(135deg,rgba(251,191,36,0.06),transparent)}
+.service-card:nth-child(6)::before{background:linear-gradient(135deg,rgba(99,102,241,0.06),transparent)}
+.service-card:nth-child(7)::before{background:linear-gradient(135deg,rgba(0,229,255,0.06),transparent)}
+.service-card:nth-child(8)::before{background:linear-gradient(135deg,rgba(124,58,237,0.06),transparent)}
+.service-icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1.2rem}
+.service-card h3{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:.7rem}
+.service-card p{color:var(--muted);font-size:.9rem;line-height:1.7;margin-bottom:1.2rem}
+.service-tags{display:flex;flex-wrap:wrap;gap:.5rem}
+.tag{background:rgba(255,255,255,0.05);border:1px solid var(--border);padding:.25rem .7rem;border-radius:6px;font-size:.75rem;color:var(--muted)}
+
+/* PLATFORM SECTION */
+.platform-section{padding:5rem 2rem;max-width:1200px;margin:0 auto}
+.platform-cards{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem}
+.platform-card{background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:2.5rem;display:flex;align-items:flex-start;gap:1.5rem;transition:transform .3s,border-color .3s}
+.platform-card:hover{transform:translateY(-5px)}
+.platform-card.ios{border-color:rgba(0,229,255,0.2)}
+.platform-card.ios:hover{border-color:var(--accent)}
+.platform-card.android{border-color:rgba(6,255,165,0.2)}
+.platform-card.android:hover{border-color:var(--accent3)}
+.platform-card-icon{font-size:3rem;flex-shrink:0}
+.platform-card h3{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:.6rem}
+.platform-card p{color:var(--muted);font-size:.9rem;line-height:1.7;margin-bottom:1rem}
+.platform-features{display:flex;flex-direction:column;gap:.4rem}
+.platform-feature{display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--muted)}
+.platform-feature::before{content:'✓';color:var(--accent3);font-weight:700;flex-shrink:0}
+
+/* PORTFOLIO */
+.portfolio-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.5rem}
+.portfolio-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform .3s,border-color .3s}
+.portfolio-card:hover{transform:translateY(-6px);border-color:var(--accent2)}
+.portfolio-thumb{height:200px;overflow:hidden;position:relative}
+.portfolio-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.portfolio-card:hover .portfolio-thumb img{transform:scale(1.06)}
+.portfolio-body{padding:1.5rem}
+.portfolio-body h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:.4rem}
+.portfolio-body p{color:var(--muted);font-size:.88rem;line-height:1.6;margin-bottom:1rem}
+.portfolio-meta{display:flex;align-items:center;justify-content:space-between}
+.portfolio-type{background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);color:var(--accent2);padding:.2rem .7rem;border-radius:50px;font-size:.75rem;font-weight:600}
+.portfolio-result{color:var(--accent3);font-size:.82rem;font-weight:600}
+
+/* PROCESS */
+.full-width-section{padding:6rem 2rem;background:linear-gradient(135deg,rgba(124,58,237,0.04),rgba(0,229,255,0.04));border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.process-steps{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;margin-top:3rem}
+.step{text-align:center;padding:1.5rem}
+.step-num{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;background:linear-gradient(135deg,var(--accent2),var(--accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:1rem}
+.step h4{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
+.step p{color:var(--muted);font-size:.9rem;line-height:1.6}
+
+/* TECH STACK */
+.tech-grid{display:flex;flex-wrap:wrap;gap:1rem;margin-top:2rem}
+.tech-pill{display:flex;align-items:center;gap:.6rem;background:var(--card-bg);border:1px solid var(--border);padding:.6rem 1.2rem;border-radius:50px;font-size:.9rem;font-weight:500;transition:border-color .3s,transform .2s}
+.tech-pill:hover{border-color:var(--accent2);transform:scale(1.05)}
+.tech-pill-dot{width:8px;height:8px;border-radius:50%}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:2rem}
+.pricing-card{background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:2rem;position:relative;transition:transform .3s,border-color .3s}
+.pricing-card:hover{transform:translateY(-5px)}
+.pricing-card.featured{border-color:var(--accent2);background:linear-gradient(135deg,rgba(124,58,237,0.1),rgba(0,229,255,0.05))}
+.pricing-popular{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;padding:.3rem 1.2rem;border-radius:50px;font-size:.75rem;font-weight:700;white-space:nowrap}
+.pricing-name{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
+.pricing-price{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;margin-bottom:.3rem}
+.pricing-price span{font-size:1rem;font-weight:400;color:var(--muted)}
+.pricing-desc{color:var(--muted);font-size:.88rem;margin-bottom:1.5rem;line-height:1.5}
+.pricing-features{display:flex;flex-direction:column;gap:.7rem;margin-bottom:2rem}
+.pricing-feature{display:flex;align-items:center;gap:.7rem;font-size:.9rem}
+.pricing-feature .check{color:var(--accent3);font-size:1rem;flex-shrink:0}
+.pricing-feature .cross{color:var(--muted);font-size:1rem;flex-shrink:0;opacity:.4}
+.pricing-btn{width:100%;padding:.85rem;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.95rem;cursor:pointer;transition:all .3s;text-align:center;display:block;text-decoration:none}
+.pricing-btn.outlined{background:transparent;border:1px solid var(--border);color:var(--text)}
+.pricing-btn.outlined:hover{border-color:var(--accent2);color:var(--accent)}
+.pricing-btn.filled{background:linear-gradient(135deg,var(--accent2),#4f46e5);border:none;color:#fff}
+.pricing-btn.filled:hover{box-shadow:0 10px 30px rgba(124,58,237,0.4);transform:translateY(-2px)}
+
+/* TESTIMONIALS */
+.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-top:2rem}
+.testimonial-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:1.8rem;transition:transform .3s,border-color .3s}
+.testimonial-card:hover{transform:translateY(-4px);border-color:rgba(124,58,237,0.4)}
+.stars{color:#fbbf24;font-size:1rem;margin-bottom:1rem;letter-spacing:2px}
+.testimonial-text{color:var(--text);font-size:.92rem;line-height:1.7;margin-bottom:1.2rem;font-style:italic}
+.testimonial-author{display:flex;align-items:center;gap:.8rem}
+.author-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;font-family:'Syne',sans-serif;flex-shrink:0}
+.author-name{font-weight:600;font-size:.9rem}
+.author-role{color:var(--muted);font-size:.8rem}
+
+/* TEAM */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;margin-top:2rem}
+.team-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:2rem;text-align:center;transition:transform .3s,border-color .3s}
+.team-card:hover{transform:translateY(-5px);border-color:var(--accent2)}
+.team-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;font-family:'Syne',sans-serif}
+.team-card h4{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:.3rem}
+.team-role{color:var(--accent);font-size:.82rem;font-weight:600;margin-bottom:.7rem}
+.team-bio{color:var(--muted);font-size:.83rem;line-height:1.6}
+
+/* WHY US */
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-top:2rem}
+.why-card{padding:1.5rem;border:1px solid var(--border);border-radius:12px;transition:border-color .3s}
+.why-card:hover{border-color:var(--accent2)}
+.why-icon{font-size:1.8rem;margin-bottom:.8rem}
+.why-card h4{font-family:'Syne',sans-serif;font-weight:700;margin-bottom:.4rem}
+.why-card p{color:var(--muted);font-size:.88rem;line-height:1.6}
+
+/* FAQ */
+.faq-list{display:flex;flex-direction:column;gap:.8rem;margin-top:2rem;max-width:800px}
+.faq-item{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .3s}
+.faq-item.open{border-color:rgba(124,58,237,0.4)}
+.faq-question{padding:1.2rem 1.5rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-weight:600;font-size:.95rem;user-select:none;gap:1rem}
+.faq-question:hover{color:var(--accent)}
+.faq-arrow{color:var(--accent);font-size:1.2rem;transition:transform .3s;flex-shrink:0}
+.faq-item.open .faq-arrow{transform:rotate(180deg)}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s}
+.faq-answer-inner{padding:0 1.5rem 1.2rem;color:var(--muted);font-size:.9rem;line-height:1.7}
+
+/* CONTACT */
+.contact-section{max-width:900px;margin:0 auto;padding:6rem 2rem}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+.contact-card{background:linear-gradient(135deg,rgba(124,58,237,0.1),rgba(0,229,255,0.08));border:1px solid rgba(124,58,237,0.3);border-radius:24px;padding:2.5rem}
+.contact-card h2{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;margin-bottom:1rem}
+.contact-card p{color:var(--muted);margin-bottom:1.5rem;line-height:1.7;font-size:.9rem}
+.contact-info{display:flex;flex-direction:column;gap:.8rem}
+.contact-item{display:flex;align-items:center;gap:.8rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:.8rem 1.2rem;font-size:.88rem;text-decoration:none;color:var(--text);transition:border-color .3s}
+.contact-item:hover{border-color:var(--accent)}
+.contact-btns{display:flex;flex-direction:column;gap:.8rem;margin-top:1.5rem}
+.contact-form{background:var(--card-bg);border:1px solid var(--border);border-radius:24px;padding:2.5rem}
+.contact-form h3{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;margin-bottom:1.5rem}
+.form-group{margin-bottom:1.2rem}
+.form-group label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:.4rem;font-weight:500}
+.form-group input,.form-group textarea,.form-group select{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;transition:border-color .3s;outline:none}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent2)}
+.form-group textarea{resize:vertical;min-height:100px}
+.form-group select option{background:var(--card-bg)}
+.form-submit{width:100%;padding:.9rem;border-radius:10px;background:linear-gradient(135deg,var(--accent2),#4f46e5);color:#fff;border:none;font-family:'DM Sans',sans-serif;font-weight:600;font-size:1rem;cursor:pointer;transition:all .3s}
+.form-submit:hover{box-shadow:0 10px 30px rgba(124,58,237,0.4);transform:translateY(-2px)}
+
+/* FOOTER */
+footer{background:var(--card-bg);border-top:1px solid var(--border);padding:3rem 2rem 2rem}
+.footer-inner{max-width:1200px;margin:0 auto}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:2.5rem}
+.footer-brand p{color:var(--muted);font-size:.88rem;line-height:1.7;margin-top:.7rem;max-width:260px}
+.footer-logo{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.footer-col h5{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;margin-bottom:1rem;color:var(--text)}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:.6rem}
+.footer-col ul li a{color:var(--muted);text-decoration:none;font-size:.85rem;transition:color .3s}
+.footer-col ul li a:hover{color:var(--accent)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.footer-bottom p{color:var(--muted);font-size:.82rem}
+.social-links{display:flex;gap:.8rem}
+.social-link{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:1rem;transition:border-color .3s,transform .2s;color:var(--muted)}
+.social-link:hover{border-color:var(--accent);transform:translateY(-2px);color:var(--accent)}
+
+/* PARTICLES */
+.particle{position:fixed;border-radius:50%;pointer-events:none;z-index:0;animation:floatUp linear infinite;opacity:.4}
+@keyframes floatUp{0%{transform:translateY(100vh) rotate(0deg)}100%{transform:translateY(-10vh) rotate(360deg)}}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s,transform .7s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .contact-grid{grid-template-columns:1fr}
+  .platform-cards{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr}
+  .footer-brand{grid-column:1/-1}
+}
+@media(max-width:768px){
+  .nav-links,.nav-cta{display:none}
+  .hamburger{display:flex}
+  .hero-stats{gap:1.5rem}
+  .stat-num{font-size:1.5rem}
+  .pricing-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  section{padding:4rem 1.2rem}
+  .contact-section{padding:4rem 1.2rem}
+  .platform-section{padding:3rem 1.2rem}
+  .hero h1{font-size:2.2rem}
+  .contact-card,.contact-form{padding:1.8rem}
+  .hero-stats{gap:1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="logo">Zynqora</div>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#platforms">iOS & Android</a></li>
+    <li><a href="#portfolio">Work</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta" style="display:none" id="nav-cta-desktop">Get Started</a>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#services" onclick="closeMobile()">Services</a>
+  <a href="#platforms" onclick="closeMobile()">iOS & Android</a>
+  <a href="#portfolio" onclick="closeMobile()">Our Work</a>
+  <a href="#pricing" onclick="closeMobile()">Pricing</a>
+  <a href="#tech" onclick="closeMobile()">Tech Stack</a>
+  <a href="#contact" onclick="closeMobile()">Contact</a>
+  <a href="#contact" class="nav-cta" onclick="closeMobile()">Get Started →</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div style="position:relative;z-index:1">
+    <div class="badge"><div class="badge-dot"></div> Pakistan's Future-Forward Digital Agency</div>
+    <h1>We Build <span>Digital Solutions</span><br>That Actually Work</h1>
+    <p class="hero-sub">From cutting-edge AI models to stunning web & mobile apps — Zynqora transforms your ideas into powerful digital products that drive real growth.</p>
+    <div class="platform-badges">
+      <div class="platform-badge"><div class="dot" style="background:#61dafb"></div> Web Apps</div>
+      <div class="platform-badge"><span>🍎</span> iOS Apps</div>
+      <div class="platform-badge"><span>🤖</span> Android Apps</div>
+      <div class="platform-badge"><span>🧠</span> AI Solutions</div>
+    </div>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Explore Services</button>
+      <a href="https://wa.me/923161473803" target="_blank" class="btn-secondary">💬 WhatsApp Us →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Projects Delivered</div></div>
+      <div class="stat-item"><div class="stat-num">30+</div><div class="stat-label">Happy Clients</div></div>
+      <div class="stat-item"><div class="stat-num">5★</div><div class="stat-label">Average Rating</div></div>
+      <div class="stat-item"><div class="stat-num">2</div><div class="stat-label">Platforms (iOS & Android)</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item"><span class="marquee-dot">✦</span> Web Development</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> iOS Development</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> Android Development</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> AI Integration</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> Flutter Apps</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> SEO Optimization</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> AI Bots & Chatbots</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> Custom AI Models</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> UI/UX Design</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> Digital Marketing</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> Web Development</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> iOS Development</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> Android Development</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> AI Integration</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> Flutter Apps</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> SEO Optimization</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> AI Bots & Chatbots</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> Custom AI Models</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> UI/UX Design</span>
+    <span class="marquee-item"><span class="marquee-dot">✦</span> Digital Marketing</span>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="reveal">
+    <span class="section-tag">⚡ What We Offer</span>
+    <h2 class="section-title">Our Core <span style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Services</span></h2>
+    <p class="section-sub">Complete digital solutions under one roof — from idea to launch, we handle it all with precision and passion.</p>
+  </div>
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(0,229,255,0.1)">🌐</div>
+      <h3>Web Development</h3>
+      <p>Blazing-fast, responsive websites and web applications built with modern frameworks. From portfolios to enterprise platforms — we build for performance and scale.</p>
+      <div class="service-tags"><span class="tag">React</span><span class="tag">Next.js</span><span class="tag">Node.js</span><span class="tag">WordPress</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(124,58,237,0.1)">📈</div>
+      <h3>SEO & Digital Marketing</h3>
+      <p>Dominate search rankings and grow organically. We craft SEO strategies that bring real traffic, leads, and revenue — not just clicks.</p>
+      <div class="service-tags"><span class="tag">On-Page SEO</span><span class="tag">Technical SEO</span><span class="tag">Link Building</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(6,255,165,0.1)">📱</div>
+      <h3>App Development</h3>
+      <p>Native iOS and Android apps that users love. Powerful backends, smooth UX, and scalable architecture — deployed on both App Store and Google Play.</p>
+      <div class="service-tags"><span class="tag">iOS</span><span class="tag">Android</span><span class="tag">React Native</span><span class="tag">Swift</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(251,113,133,0.1)">🦋</div>
+      <h3>Flutter Development</h3>
+      <p>Single codebase, all platforms. Beautiful Flutter apps for mobile, web, and desktop — pixel-perfect UI with native performance on iOS & Android.</p>
+      <div class="service-tags"><span class="tag">Flutter</span><span class="tag">Dart</span><span class="tag">Firebase</span><span class="tag">Supabase</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(251,191,36,0.1)">🤖</div>
+      <h3>AI Tools & Automation</h3>
+      <p>Custom AI-powered tools that automate workflows, boost productivity, and give your business a serious competitive edge.</p>
+      <div class="service-tags"><span class="tag">LangChain</span><span class="tag">OpenAI API</span><span class="tag">Automation</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(99,102,241,0.1)">💬</div>
+      <h3>AI Bots & Chatbots</h3>
+      <p>Smart conversational bots for customer support, lead generation, and business operations. Available 24/7, trained on your data.</p>
+      <div class="service-tags"><span class="tag">WhatsApp Bot</span><span class="tag">Web Chatbot</span><span class="tag">GPT-4</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(0,229,255,0.1)">🧠</div>
+      <h3>Custom AI Models</h3>
+      <p>Fine-tuned AI models trained specifically for your industry. From NLP to computer vision — we build AI that understands your business.</p>
+      <div class="service-tags"><span class="tag">Fine-tuning</span><span class="tag">RAG</span><span class="tag">ML Pipeline</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background:rgba(124,58,237,0.1)">🎨</div>
+      <h3>UI/UX Design</h3>
+      <p>User-centered design that converts. Wireframes, prototypes, and polished final designs — crafted for both beauty and usability.</p>
+      <div class="service-tags"><span class="tag">Figma</span><span class="tag">Prototyping</span><span class="tag">Design System</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- iOS & ANDROID -->
+<div class="full-width-section" id="platforms">
+  <div class="platform-section" style="padding:0;max-width:1200px;margin:0 auto">
+    <div class="reveal">
+      <span class="section-tag">📱 Mobile Experts</span>
+      <h2 class="section-title">iOS <span style="background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">&</span> Android</h2>
+      <p class="section-sub">We build for both platforms — native performance, App Store & Google Play ready. One team, two platforms, zero compromises.</p>
+    </div>
+    <div class="platform-cards reveal">
+      <div class="platform-card ios">
+        <div class="platform-card-icon">🍎</div>
+        <div>
+          <h3>iOS Development</h3>
+          <p>Native iOS apps built with Swift and SwiftUI. App Store submission, TestFlight beta, and full Apple ecosystem integration.</p>
+          <div class="platform-features">
+            <div class="platform-feature">Swift & SwiftUI / Objective-C</div>
+            <div class="platform-feature">App Store submission & review support</div>
+            <div class="platform-feature">Push notifications, Apple Pay, Face ID</div>
+            <div class="platform-feature">iPad & iPhone optimized layouts</div>
+            <div class="platform-feature">Core Data & CloudKit integration</div>
+          </div>
+        </div>
+      </div>
+      <div class="platform-card android">
+        <div class="platform-card-icon">🤖</div>
+        <div>
+          <h3>Android Development</h3>
+          <p>Native Android apps with Kotlin and Jetpack Compose. Google Play publishing, Firebase integration, and Material Design 3.</p>
+          <div class="platform-features">
+            <div class="platform-feature">Kotlin & Jetpack Compose</div>
+            <div class="platform-feature">Google Play Store submission</div>
+            <div class="platform-feature">Firebase, Google Pay, Biometrics</div>
+            <div class="platform-feature">Tablet & foldable support</div>
+            <div class="platform-feature">Room DB & WorkManager</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="reveal">
+    <span class="section-tag">🚀 Our Work</span>
+    <h2 class="section-title">Recent <span style="background:linear-gradient(135deg,var(--accent2),var(--accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Projects</span></h2>
+    <p class="section-sub">Real results for real clients. Here's a glimpse of what we've built.</p>
+  </div>
+  <div class="portfolio-grid reveal">
+    <div class="portfolio-card">
+      <div class="portfolio-thumb"><img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop&auto=format" alt="E-Commerce Platform" loading="lazy"></div>
+      <div class="portfolio-body">
+        <h3>E-Commerce Platform</h3>
+        <p>Full-stack online store with inventory management, payment gateway, and admin dashboard for a retail brand.</p>
+        <div class="portfolio-meta">
+          <span class="portfolio-type">Web App</span>
+          <span class="portfolio-result">↑ 220% revenue</span>
+        </div>
+      </div>
+    </div>
+    <div class="portfolio-card">
+      <div class="portfolio-thumb"><img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&h=400&fit=crop&auto=format" alt="Healthcare AI Chatbot" loading="lazy"></div>
+      <div class="portfolio-body">
+        <h3>Healthcare AI Chatbot</h3>
+        <p>GPT-4 powered symptom checker and appointment booking bot integrated into a clinic's WhatsApp & website.</p>
+        <div class="portfolio-meta">
+          <span class="portfolio-type">AI Bot</span>
+          <span class="portfolio-result">↓ 60% support load</span>
+        </div>
+      </div>
+    </div>
+    <div class="portfolio-card">
+      <div class="portfolio-thumb"><img src="https://images.unsplash.com/photo-1609791580668-a5a8f2c5d9de?w=600&h=400&fit=crop&auto=format" alt="Delivery Tracking App" loading="lazy"></div>
+      <div class="portfolio-body">
+        <h3>Delivery Tracking App</h3>
+        <p>Flutter app for iOS & Android with real-time GPS tracking, driver management, and customer notifications.</p>
+        <div class="portfolio-meta">
+          <span class="portfolio-type">iOS & Android</span>
+          <span class="portfolio-result">4.8★ App Store</span>
+        </div>
+      </div>
+    </div>
+    <div class="portfolio-card">
+      <div class="portfolio-thumb"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop&auto=format" alt="SEO Campaign" loading="lazy"></div>
+      <div class="portfolio-body">
+        <h3>SEO & Growth Campaign</h3>
+        <p>Technical SEO overhaul, content strategy, and backlink campaign for a SaaS startup in competitive niche.</p>
+        <div class="portfolio-meta">
+          <span class="portfolio-type">SEO</span>
+          <span class="portfolio-result">↑ 340% organic traffic</span>
+        </div>
+      </div>
+    </div>
+    <div class="portfolio-card">
+      <div class="portfolio-thumb"><img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&h=400&fit=crop&auto=format" alt="Legal Document AI" loading="lazy"></div>
+      <div class="portfolio-body">
+        <h3>Legal Document AI</h3>
+        <p>Custom RAG-based AI model to analyze, summarize, and extract clauses from legal contracts for a law firm.</p>
+        <div class="portfolio-meta">
+          <span class="portfolio-type">Custom AI</span>
+          <span class="portfolio-result">↓ 75% review time</span>
+        </div>
+      </div>
+    </div>
+    <div class="portfolio-card">
+      <div class="portfolio-thumb"><img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop&auto=format" alt="Corporate Website" loading="lazy"></div>
+      <div class="portfolio-body">
+        <h3>Corporate Rebrand & Website</h3>
+        <p>Complete UI/UX redesign and Next.js rebuild for a consulting firm — 3x faster load time, modern design system.</p>
+        <div class="portfolio-meta">
+          <span class="portfolio-type">Web + Design</span>
+          <span class="portfolio-result">↑ 180% conversions</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<div class="full-width-section" id="process">
+  <div style="max-width:1200px;margin:0 auto">
+    <div class="reveal">
+      <span class="section-tag">🔄 How We Work</span>
+      <h2 class="section-title">Our Simple <span style="background:linear-gradient(135deg,var(--accent3),var(--accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Process</span></h2>
+    </div>
+    <div class="process-steps reveal">
+      <div class="step"><div class="step-num">01</div><h4>Discovery Call</h4><p>We understand your vision, goals, and requirements in detail before writing a single line of code.</p></div>
+      <div class="step"><div class="step-num">02</div><h4>Strategy & Design</h4><p>Our team crafts a tailored roadmap with timelines, tech stack selection, and UI/UX design concepts.</p></div>
+      <div class="step"><div class="step-num">03</div><h4>Development</h4><p>Agile sprints with regular updates. You see progress every step of the way — no black boxes.</p></div>
+      <div class="step"><div class="step-num">04</div><h4>Launch & Support</h4><p>Thorough testing, smooth deployment, and ongoing maintenance to keep everything running perfectly.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- TECH STACK -->
+<section id="tech">
+  <div class="reveal">
+    <span class="section-tag">🔧 Tech Stack</span>
+    <h2 class="section-title">Tools We <span style="background:linear-gradient(135deg,var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Master</span></h2>
+    <p class="section-sub">We work with the best modern technologies to deliver world-class digital products.</p>
+  </div>
+  <div class="tech-grid reveal">
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#61dafb"></div>React.js</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#e2e8f0"></div>Next.js</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#43e97b"></div>Node.js</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#54c5f8"></div>Flutter</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#f05138"></div>Swift / iOS</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#7f52ff"></div>Kotlin / Android</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#ffca28"></div>Firebase</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#a78bfa"></div>OpenAI</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#ffd600"></div>Python</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#2dce89"></div>MongoDB</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#336791"></div>PostgreSQL</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#ff9900"></div>AWS</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#00b4d8"></div>Supabase</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#f6c90e"></div>Figma</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#ff4785"></div>LangChain</div>
+    <div class="tech-pill"><div class="tech-pill-dot" style="background:#ff6f00"></div>TensorFlow</div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<div class="full-width-section" id="pricing">
+  <div style="max-width:1200px;margin:0 auto">
+    <div class="reveal">
+      <span class="section-tag">💰 Pricing</span>
+      <h2 class="section-title">Simple, Transparent <span style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Pricing</span></h2>
+      <p class="section-sub">No hidden fees. Pick a plan or get a custom quote for your project.</p>
+    </div>
+    <div class="pricing-grid reveal">
+      <div class="pricing-card">
+        <div class="pricing-name">Starter</div>
+        <div class="pricing-price">$499<span> / project</span></div>
+        <div class="pricing-desc">Perfect for small businesses needing a professional online presence.</div>
+        <div class="pricing-features">
+          <div class="pricing-feature"><span class="check">✓</span> Landing Page or Portfolio Site</div>
+          <div class="pricing-feature"><span class="check">✓</span> Mobile Responsive Design</div>
+          <div class="pricing-feature"><span class="check">✓</span> Basic SEO Setup</div>
+          <div class="pricing-feature"><span class="check">✓</span> Contact Form Integration</div>
+          <div class="pricing-feature"><span class="check">✓</span> 2 Weeks Delivery</div>
+          <div class="pricing-feature"><span class="cross">✗</span> Mobile App</div>
+          <div class="pricing-feature"><span class="cross">✗</span> AI Integration</div>
+        </div>
+        <a href="https://wa.me/923161473803?text=Hi%2C%20I%27m%20interested%20in%20the%20Starter%20plan" target="_blank" class="pricing-btn outlined">Get Started</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-popular">Most Popular</div>
+        <div class="pricing-name">Growth</div>
+        <div class="pricing-price">$1,499<span> / project</span></div>
+        <div class="pricing-desc">Full-stack web or mobile app with advanced features and AI integration.</div>
+        <div class="pricing-features">
+          <div class="pricing-feature"><span class="check">✓</span> Full Web App or Mobile App</div>
+          <div class="pricing-feature"><span class="check">✓</span> iOS or Android (your choice)</div>
+          <div class="pricing-feature"><span class="check">✓</span> AI Chatbot Integration</div>
+          <div class="pricing-feature"><span class="check">✓</span> Admin Dashboard</div>
+          <div class="pricing-feature"><span class="check">✓</span> Advanced SEO</div>
+          <div class="pricing-feature"><span class="check">✓</span> 1 Month Post-launch Support</div>
+          <div class="pricing-feature"><span class="cross">✗</span> Custom AI Model</div>
+        </div>
+        <a href="https://wa.me/923161473803?text=Hi%2C%20I%27m%20interested%20in%20the%20Growth%20plan" target="_blank" class="pricing-btn filled">Get Started</a>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-name">Enterprise</div>
+        <div class="pricing-price">Custom<span> quote</span></div>
+        <div class="pricing-desc">End-to-end digital transformation with AI, iOS, Android, and ongoing partnership.</div>
+        <div class="pricing-features">
+          <div class="pricing-feature"><span class="check">✓</span> iOS + Android Both Platforms</div>
+          <div class="pricing-feature"><span class="check">✓</span> Custom AI Model (Fine-tuned)</div>
+          <div class="pricing-feature"><span class="check">✓</span> Full Web Platform</div>
+          <div class="pricing-feature"><span class="check">✓</span> Dedicated Project Manager</div>
+          <div class="pricing-feature"><span class="check">✓</span> Priority Support (24/7)</div>
+          <div class="pricing-feature"><span class="check">✓</span> 3 Months Post-launch Support</div>
+          <div class="pricing-feature"><span class="check">✓</span> NDA & IP Ownership</div>
+        </div>
+        <a href="https://wa.me/923161473803?text=Hi%2C%20I%27m%20interested%20in%20Enterprise%20services" target="_blank" class="pricing-btn outlined">Let's Talk</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="reveal">
+    <span class="section-tag">⭐ Client Reviews</span>
+    <h2 class="section-title">What Clients <span style="background:linear-gradient(135deg,var(--accent3),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Say</span></h2>
+    <p class="section-sub">Don't take our word for it — hear from the people we've worked with.</p>
+  </div>
+  <div class="testimonials-grid reveal">
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Zynqora delivered our e-commerce platform in under 3 weeks. Clean code, great communication, and exactly what we envisioned. Revenue tripled in the first quarter."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background:rgba(0,229,255,0.15);color:var(--accent)">S</div>
+        <div><div class="author-name">Sara Khan</div><div class="author-role">Founder, StyleMart PK</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Their Flutter app works flawlessly on both iOS and Android. The UI is stunning and users love it. 4.8 stars on both stores. Couldn't ask for more."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background:rgba(124,58,237,0.15);color:var(--accent2)">A</div>
+        <div><div class="author-name">Ali Raza</div><div class="author-role">CEO, SwiftDeliver</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"The AI chatbot they built handles 60% of our customer queries automatically. Our support team finally has breathing room. Worth every penny."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background:rgba(6,255,165,0.15);color:var(--accent3)">F</div>
+        <div><div class="author-name">Fatima Malik</div><div class="author-role">COO, MediConnect</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Our organic traffic went up 340% in 4 months after their SEO campaign. They know what they're doing. Professional, transparent, and results-driven."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background:rgba(251,191,36,0.15);color:#fbbf24">U</div>
+        <div><div class="author-name">Usman Baig</div><div class="author-role">Marketing Director, TechSol</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"The custom AI model they built for our legal firm saves us hours daily. Document review that used to take half a day now takes 15 minutes. Incredible."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background:rgba(99,102,241,0.15);color:#818cf8">H</div>
+        <div><div class="author-name">Hassan Sheikh</div><div class="author-role">Partner, LexCore</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Best agency experience I've had. No bs, no delays, no hidden costs. They built exactly what was scoped, on time, on budget. Already working on project #2 with them."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background:rgba(251,113,133,0.15);color:#fb7185">Z</div>
+        <div><div class="author-name">Zainab Ahmed</div><div class="author-role">Founder, EdTech Startup</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<div class="full-width-section" id="team">
+  <div style="max-width:1200px;margin:0 auto">
+    <div class="reveal">
+      <span class="section-tag">👥 The Team</span>
+      <h2 class="section-title">People Behind <span style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Zynqora</span></h2>
+      <p class="section-sub" style="margin-bottom:0">Passionate builders obsessed with crafting great digital products.</p>
+    </div>
+    <div class="team-grid reveal">
+      <div class="team-card">
+        <div class="team-avatar" style="background:rgba(0,229,255,0.1);color:var(--accent)">AH</div>
+        <h4>Ahmad Hassan</h4>
+        <div class="team-role">Founder & CEO</div>
+        <div class="team-bio">Full-stack developer & AI engineer. Passionate about building products that solve real problems.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" style="background:rgba(124,58,237,0.1);color:var(--accent2)">MU</div>
+        <h4>Muhammad Umar</h4>
+        <div class="team-role">Lead Mobile Developer</div>
+        <div class="team-bio">iOS & Android specialist with 5+ years. Flutter expert. Ships beautiful, performant apps.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" style="background:rgba(6,255,165,0.1);color:var(--accent3)">SA</div>
+        <h4>Sana Arif</h4>
+        <div class="team-role">UI/UX Lead Designer</div>
+        <div class="team-bio">Figma wizard. Designs interfaces that are not just pretty — they convert and delight users.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" style="background:rgba(251,191,36,0.1);color:#fbbf24">OA</div>
+        <h4>Omar Aslam</h4>
+        <div class="team-role">AI & ML Engineer</div>
+        <div class="team-bio">Builds and fine-tunes AI models. LangChain, RAG, computer vision — if it's AI, he's on it.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHY US -->
+<section>
+  <div class="reveal">
+    <span class="section-tag">💡 Why Zynqora</span>
+    <h2 class="section-title">Why Clients <span style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Choose Us</span></h2>
+  </div>
+  <div class="why-grid reveal">
+    <div class="why-card"><div class="why-icon">⚡</div><h4>Fast Delivery</h4><p>We ship faster than traditional agencies without compromising on quality. Time is money, we respect both.</p></div>
+    <div class="why-card"><div class="why-icon">🔐</div><h4>Transparent Process</h4><p>No hidden costs, no surprises. Clear communication, regular updates, and full visibility into your project.</p></div>
+    <div class="why-card"><div class="why-icon">🌍</div><h4>AI-First Approach</h4><p>We integrate AI into every solution where it adds value — making your product smarter from day one.</p></div>
+    <div class="why-card"><div class="why-icon">🛠️</div><h4>End-to-End Service</h4><p>Design, develop, deploy, and maintain — you get one team for everything. No vendor juggling.</p></div>
+    <div class="why-card"><div class="why-icon">💰</div><h4>Competitive Pricing</h4><p>Premium quality at Pakistan-friendly prices. Global standards, local rates — the best of both worlds.</p></div>
+    <div class="why-card"><div class="why-icon">🔄</div><h4>Post-Launch Support</h4><p>We don't disappear after delivery. Ongoing maintenance, updates, and support keep your product thriving.</p></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<div class="full-width-section" id="faq">
+  <div style="max-width:1200px;margin:0 auto">
+    <div class="reveal">
+      <span class="section-tag">❓ FAQ</span>
+      <h2 class="section-title">Common <span style="background:linear-gradient(135deg,var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Questions</span></h2>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <div class="faq-question">How long does a typical project take? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer"><div class="faq-answer-inner">Depends on scope. A landing page takes 1–2 weeks. A full mobile app (iOS + Android) typically takes 6–10 weeks. We give a detailed timeline during the discovery call so you always know what to expect.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Do you publish apps to App Store and Google Play? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer"><div class="faq-answer-inner">Yes. We handle the full submission process for both App Store (iOS) and Google Play (Android) — including screenshots, descriptions, and review navigation. You just need a developer account.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">What is your payment structure? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer"><div class="faq-answer-inner">We typically work on a 50% upfront / 50% on delivery basis for fixed-scope projects. For larger projects, we can split into milestone-based payments. We accept bank transfer, JazzCash, EasyPaisa, and PayPal.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Can you work with our existing codebase or design? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer"><div class="faq-answer-inner">Absolutely. We regularly take over existing projects, fix bugs, add features, or redesign UI. We'll do a brief code audit first so we can give you an accurate estimate.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Do you offer ongoing maintenance after launch? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer"><div class="faq-answer-inner">Yes — all plans include a post-launch support window (2 weeks to 3 months depending on the plan). After that, we offer flexible monthly maintenance retainers. We don't disappear after shipping.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Who owns the code and IP after delivery? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer"><div class="faq-answer-inner">You do. Full source code, design files, and all assets are transferred to you upon final payment. For enterprise clients, we also provide a signed NDA and IP ownership agreement upfront.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div id="contact">
+  <div class="contact-section">
+    <div class="reveal">
+      <span class="section-tag">📩 Get In Touch</span>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <h2>Ready to Build<br>Something <span style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">Amazing?</span></h2>
+          <p>Tell us about your project and we'll get back to you within 24 hours with a free consultation and quote.</p>
+          <div class="contact-btns">
+            <a href="https://wa.me/923161473803" target="_blank" class="btn-primary" style="text-align:center">💬 WhatsApp Us</a>
+            <a href="mailto:info@zynqora.com" class="btn-secondary" style="text-align:center">📧 Email Us</a>
+          </div>
+          <div class="contact-info" style="margin-top:1.5rem">
+            <a href="https://wa.me/923161473803" target="_blank" class="contact-item">📱 +92 316 1473803</a>
+            <div class="contact-item">📍 Lahore, Pakistan</div>
+            <div class="contact-item">⏰ Mon–Sat, 9am – 8pm PKT</div>
+            <div class="contact-item">🌐 www.zynqora.com</div>
+          </div>
+        </div>
+        <div class="contact-form">
+          <h3>Send a Message</h3>
+          <form onsubmit="handleForm(event)">
+            <div class="form-group">
+              <label>Your Name</label>
+              <input type="text" placeholder="Ahmad Ali" required>
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+              <label>Service Needed</label>
+              <select>
+                <option value="">Select a service...</option>
+                <option>Web Development</option>
+                <option>iOS App Development</option>
+                <option>Android App Development</option>
+                <option>Flutter App</option>
+                <option>AI Integration / Chatbot</option>
+                <option>Custom AI Model</option>
+                <option>SEO & Marketing</option>
+                <option>UI/UX Design</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tell us about your project</label>
+              <textarea placeholder="Brief description of what you need..."></textarea>
+            </div>
+            <button type="submit" class="form-submit">Send Message →</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">Zynqora</div>
+        <p>Pakistan's future-forward digital agency. We build web apps, iOS & Android apps, and AI solutions that drive real business growth.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Services</h5>
+        <ul>
+          <li><a href="#services">Web Development</a></li>
+          <li><a href="#platforms">iOS Development</a></li>
+          <li><a href="#platforms">Android Development</a></li>
+          <li><a href="#services">AI Integration</a></li>
+          <li><a href="#services">SEO & Marketing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#portfolio">Our Work</a></li>
+          <li><a href="#team">Team</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="https://wa.me/923161473803" target="_blank">WhatsApp</a></li>
+          <li><a href="mailto:info@zynqora.com">Email Us</a></li>
+          <li><a href="#contact">Get a Quote</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Zynqora Digital Agency · Lahore, Pakistan · All rights reserved</p>
+      <div class="social-links">
+        <a href="#" class="social-link" title="LinkedIn">in</a>
+        <a href="#" class="social-link" title="Instagram">ig</a>
+        <a href="#" class="social-link" title="GitHub">gh</a>
+        <a href="https://wa.me/923161473803" target="_blank" class="social-link" title="WhatsApp">wa</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Floating particles
+for(let i=0;i<15;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  const s=Math.random()*5+3;
+  p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}vw;background:${Math.random()>.5?'rgba(0,229,255,0.35)':'rgba(124,58,237,0.35)'};animation-duration:${Math.random()*20+15}s;animation-delay:${Math.random()*-25}s`;
+  document.body.appendChild(p);
+}
+
+// Scroll reveal
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// Hamburger menu
+const hamburger=document.getElementById('hamburger');
+const mobileMenu=document.getElementById('mobile-menu');
+hamburger.addEventListener('click',()=>{
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+});
+function closeMobile(){
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+}
+// Show nav CTA on desktop
+const navCta=document.getElementById('nav-cta-desktop');
+function checkWidth(){navCta.style.display=window.innerWidth>768?'inline-block':'none'}
+checkWidth();window.addEventListener('resize',checkWidth);
+
+// FAQ accordion
+document.querySelectorAll('.faq-question').forEach(q=>{
+  q.addEventListener('click',()=>{
+    const item=q.parentElement;
+    const answer=item.querySelector('.faq-answer');
+    const isOpen=item.classList.contains('open');
+    // close all
+    document.querySelectorAll('.faq-item').forEach(i=>{
+      i.classList.remove('open');
+      i.querySelector('.faq-answer').style.maxHeight='0';
+    });
+    if(!isOpen){
+      item.classList.add('open');
+      answer.style.maxHeight=answer.scrollHeight+'px';
+    }
+  });
+});
+
+// Contact form → redirect to WhatsApp
+function handleForm(e){
+  e.preventDefault();
+  const name=e.target.querySelector('input[type=text]').value;
+  const service=e.target.querySelector('select').value||'General inquiry';
+  const msg=e.target.querySelector('textarea').value;
+  const text=encodeURIComponent(`Hi Zynqora! My name is ${name}.\nService: ${service}\n\n${msg}`);
+  window.open('https://wa.me/923161473803?text='+text,'_blank');
+}
+</script>
+</body>
+</html>
