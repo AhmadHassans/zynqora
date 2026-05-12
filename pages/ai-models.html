@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Custom AI Models — Zynqora</title>
+<meta name="description" content="Custom AI model development, fine-tuning, and deployment for your business. Computer vision, NLP, predictive analytics, and more.">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#0a0a0f;--accent:#00e5ff;--accent2:#7c3aed;--accent3:#06ffa5;--text:#e8eaf0;--muted:#8892a4;--card-bg:#111827;--border:#1e293b}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--primary);color:var(--text);overflow-x:hidden;line-height:1.6}
+a{text-decoration:none;color:inherit}
+
+/* GRID BG */
+.grid-bg{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,229,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
+.glow-orb{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0}
+.glow-orb.g1{width:500px;height:500px;background:rgba(124,58,237,.07);top:-100px;left:-100px}
+.glow-orb.g2{width:400px;height:400px;background:rgba(6,255,165,.05);bottom:10%;right:-100px}
+.particle{position:fixed;border-radius:50%;pointer-events:none;z-index:0;animation:floatUp linear infinite}
+@keyframes floatUp{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:.5}100%{transform:translateY(-100px) scale(1);opacity:0}}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.2rem 2rem;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,15,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{color:var(--muted);font-size:.9rem;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;padding:.55rem 1.4rem;border-radius:8px;font-weight:700;font-size:.9rem;transition:opacity .2s}
+.nav-cta:hover{opacity:.85}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;z-index:1001}
+.hamburger span{display:block;width:24px;height:2px;background:var(--text);transition:all .3s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mob-menu{display:none;position:fixed;inset:0;z-index:999;background:rgba(10,10,15,.98);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:2rem}
+.mob-menu.open{display:flex}
+.mob-menu a{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:var(--text);transition:color .2s}
+.mob-menu a:hover{color:var(--accent)}
+.mob-cta{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000!important;padding:.7rem 2rem;border-radius:10px;font-size:1rem!important}
+
+/* HERO */
+.hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 5rem}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2);color:#a78bfa;padding:.4rem 1rem;border-radius:100px;font-size:.8rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-bottom:1.5rem}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.4rem,6vw,4.5rem);font-weight:800;line-height:1.1;margin-bottom:1.2rem}
+.hero h1 .grad{background:linear-gradient(135deg,var(--accent2),var(--accent),var(--accent3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:1.15rem;color:var(--muted);max-width:560px;margin:0 auto 2.5rem;font-weight:300}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;padding:.8rem 2rem;border-radius:10px;font-weight:700;font-size:1rem;transition:transform .2s,box-shadow .2s;display:inline-block}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,229,255,.25)}
+.btn-ghost{border:1px solid var(--border);color:var(--text);padding:.8rem 2rem;border-radius:10px;font-weight:500;font-size:1rem;transition:border-color .2s,background .2s;display:inline-block}
+.btn-ghost:hover{border-color:var(--accent);background:rgba(0,229,255,.05)}
+.hero-stats{display:flex;gap:3rem;justify-content:center;flex-wrap:wrap;margin-top:4rem}
+.stat{text-align:center}
+.stat-num{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{color:var(--muted);font-size:.85rem}
+
+/* SECTIONS */
+section{position:relative;z-index:1;padding:6rem 2rem}
+.container{max-width:1200px;margin:0 auto}
+.section-label{font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.8rem}
+.section-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:800;margin-bottom:1rem}
+.section-sub{color:var(--muted);font-size:1.05rem;max-width:580px;font-weight:300}
+
+/* FEATURES */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-top:3.5rem}
+.feat-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:2rem;transition:border-color .3s,transform .3s}
+.feat-card:hover{border-color:rgba(124,58,237,.4);transform:translateY(-4px)}
+.feat-icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1.2rem}
+.feat-card h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:.6rem}
+.feat-card p{color:var(--muted);font-size:.9rem;line-height:1.6}
+
+/* MODEL TYPES */
+.model-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:3.5rem}
+.model-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:2rem;transition:border-color .3s,transform .3s;text-align:center}
+.model-card:hover{border-color:rgba(0,229,255,.3);transform:translateY(-4px)}
+.model-icon{font-size:2.5rem;margin-bottom:1rem}
+.model-card h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:.5rem}
+.model-card p{color:var(--muted);font-size:.85rem}
+.model-tag{display:inline-block;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.15);color:var(--accent);padding:.2rem .7rem;border-radius:6px;font-size:.75rem;font-weight:600;margin-top:.8rem}
+
+/* PIPELINE VIZ */
+.pipeline{display:flex;align-items:center;gap:0;margin-top:3.5rem;overflow-x:auto;padding:1rem 0}
+.pipe-step{flex:1;min-width:140px;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem 1rem;text-align:center;position:relative}
+.pipe-arrow{width:40px;flex-shrink:0;text-align:center;color:var(--accent);font-size:1.2rem;font-weight:700}
+.pipe-step .pipe-icon{font-size:1.8rem;margin-bottom:.5rem}
+.pipe-step h4{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.3rem}
+.pipe-step p{color:var(--muted);font-size:.75rem}
+
+/* PROCESS */
+.process-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;margin-top:3.5rem}
+.process-step{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:2rem;text-align:center}
+.step-num{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:.8rem}
+.process-step h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:.5rem}
+.process-step p{color:var(--muted);font-size:.85rem}
+
+/* TOOLS */
+.tools-wrap{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem}
+.tool-chip{background:var(--card-bg);border:1px solid var(--border);padding:.5rem 1rem;border-radius:8px;font-size:.85rem;font-weight:500;color:var(--muted);transition:border-color .2s,color .2s}
+.tool-chip:hover{border-color:var(--accent2);color:#a78bfa}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:3.5rem}
+.price-card{background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:2.5rem;position:relative;transition:transform .3s,border-color .3s}
+.price-card:hover{transform:translateY(-6px)}
+.price-card.popular{border-color:var(--accent);background:linear-gradient(135deg,rgba(0,229,255,.05),rgba(124,58,237,.05))}
+.popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;padding:.3rem 1.2rem;border-radius:100px;font-size:.75rem;font-weight:800;white-space:nowrap}
+.price-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--muted);margin-bottom:1rem;text-transform:uppercase;letter-spacing:.08em}
+.price-amount{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;line-height:1;margin-bottom:.3rem}
+.price-amount span{font-size:1rem;font-weight:400;color:var(--muted)}
+.price-desc{color:var(--muted);font-size:.85rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:.7rem;margin-bottom:2rem}
+.price-features li{display:flex;align-items:center;gap:.75rem;font-size:.9rem}
+.price-features li::before{content:'✓';color:var(--accent3);font-weight:700;flex-shrink:0}
+.price-features li.no::before{content:'✗';color:var(--border)}
+.price-features li.no{color:var(--muted)}
+.price-btn{width:100%;padding:.85rem;border-radius:10px;font-weight:700;font-size:.95rem;cursor:pointer;border:none;transition:all .2s;text-align:center;display:block}
+.price-btn.outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.price-btn.outline:hover{border-color:var(--accent);background:rgba(0,229,255,.05)}
+.price-btn.filled{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000}
+.price-btn.filled:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,229,255,.2)}
+.price-btn.custom{background:linear-gradient(135deg,var(--accent2),var(--accent3));color:#fff}
+.price-btn.custom:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(124,58,237,.3)}
+
+/* WHY US */
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;margin-top:3.5rem}
+.why-card{padding:2rem;background:var(--card-bg);border:1px solid var(--border);border-radius:16px;text-align:center;transition:border-color .3s}
+.why-card:hover{border-color:rgba(124,58,237,.4)}
+.why-icon{font-size:2.2rem;margin-bottom:1rem}
+.why-card h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:.5rem}
+.why-card p{color:var(--muted);font-size:.85rem}
+
+/* CTA */
+.cta-section{text-align:center;padding:6rem 2rem}
+.cta-box{max-width:700px;margin:0 auto;background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(0,229,255,.06));border:1px solid rgba(124,58,237,.2);border-radius:24px;padding:4rem 3rem}
+.cta-box h2{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:1rem}
+.cta-box p{color:var(--muted);margin-bottom:2rem;font-size:1.05rem}
+.cta-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* FOOTER */
+footer{position:relative;z-index:1;background:rgba(255,255,255,.02);border-top:1px solid var(--border);padding:3rem 2rem}
+.footer-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem}
+.footer-links{display:flex;gap:1.5rem;flex-wrap:wrap}
+.footer-links a{color:var(--muted);font-size:.85rem;transition:color .2s}
+.footer-links a:hover{color:var(--accent)}
+.footer-copy{color:var(--muted);font-size:.8rem}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .nav-links,.nav-cta{display:none}
+  .hamburger{display:flex}
+  .pgrid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .process-grid{grid-template-columns:1fr 1fr}
+  .why-grid{grid-template-columns:1fr 1fr}
+  .model-grid{grid-template-columns:1fr 1fr}
+  .pipeline{flex-direction:column}
+  .pipe-arrow{transform:rotate(90deg)}
+  .footer-inner{flex-direction:column;text-align:center}
+}
+@media(max-width:480px){
+  .process-grid,.why-grid,.model-grid{grid-template-columns:1fr}
+  .hero-stats{gap:1.5rem}
+  .cta-box{padding:2.5rem 1.5rem}
+}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="glow-orb g1"></div>
+<div class="glow-orb g2"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="../index.html" class="logo">Zynqora</a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="./web-development.html">Web Dev</a></li>
+    <li><a href="./app-development.html">App Dev</a></li>
+    <li><a href="./ai-bots.html">AI Bots</a></li>
+    <li><a href="./ai-models.html" style="color:var(--accent)">AI Models</a></li>
+    <li><a href="./ui-ux-design.html">UI/UX</a></li>
+  </ul>
+  <a href="https://wa.me/923161473803?text=Hi%20Zynqora%2C%20I%20need%20a%20custom%20AI%20model!" class="nav-cta" target="_blank">Get Started</a>
+  <div class="hamburger" id="ham"><span></span><span></span><span></span></div>
+</nav>
+<div class="mob-menu" id="mob">
+  <a href="../index.html">Home</a>
+  <a href="./web-development.html">Web Dev</a>
+  <a href="./app-development.html">App Dev</a>
+  <a href="./ai-bots.html">AI Bots</a>
+  <a href="./ai-models.html">AI Models</a>
+  <a href="./ui-ux-design.html">UI/UX</a>
+  <a href="https://wa.me/923161473803?text=Hi%20Zynqora%2C%20I%20need%20a%20custom%20AI%20model!" class="mob-cta" target="_blank">Get Started</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="hero-badge">🧠 Custom AI Development</div>
+    <h1>AI Trained for<br><span class="grad">YOUR Business.</span></h1>
+    <p>Custom machine learning models, fine-tuned LLMs, and computer vision systems — built specifically for your data, your industry, your goals.</p>
+    <div class="hero-btns">
+      <a href="https://wa.me/923161473803?text=Hi%20Zynqora%2C%20I%20want%20to%20discuss%20a%20custom%20AI%20model!" class="btn-primary" target="_blank">Start a Project</a>
+      <a href="#pricing" class="btn-ghost">View Pricing</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">95%+</div><div class="stat-label">Model Accuracy Rate</div></div>
+      <div class="stat"><div class="stat-num">10×</div><div class="stat-label">Faster Than Manual Processes</div></div>
+      <div class="stat"><div class="stat-num">50+</div><div class="stat-label">Models Deployed</div></div>
+      <div class="stat"><div class="stat-num">ROI</div><div class="stat-label">Proven Business Impact</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section>
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">What We Build</div>
+      <h2 class="section-title">End-to-End AI Model Development</h2>
+      <p class="section-sub">From data to deployment — we handle the full ML lifecycle so you don't have to.</p>
+    </div>
+    <div class="pgrid">
+      <div class="feat-card reveal">
+        <div class="feat-icon" style="background:rgba(124,58,237,.1)">🔧</div>
+        <h3>Custom Model Training</h3>
+        <p>Train models from scratch on your proprietary data. Deep learning architectures tailored to your specific use case and domain.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon" style="background:rgba(0,229,255,.1)">⚙️</div>
+        <h3>LLM Fine-Tuning</h3>
+        <p>Fine-tune GPT, LLaMA, Mistral, and other foundation models on your business data for domain-specific intelligence and accuracy.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon" style="background:rgba(6,255,165,.1)">👁️</div>
+        <h3>Computer Vision</h3>
+        <p>Object detection, image classification, defect detection, face recognition — AI that sees and understands visual data.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon" style="background:rgba(124,58,237,.1)">📈</div>
+        <h3>Predictive Analytics</h3>
+        <p>Forecast sales, churn, demand, and risks. Turn your historical data into actionable future predictions with high accuracy.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon" style="background:rgba(0,229,255,.1)">💬</div>
+        <h3>NLP & Text Intelligence</h3>
+        <p>Sentiment analysis, named entity recognition, document classification, and text summarization for your business documents.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon" style="background:rgba(6,255,165,.1)">🚀</div>
+        <h3>Model Deployment & MLOps</h3>
+        <p>Deploy models to production with robust APIs, monitoring, versioning, and auto-retraining pipelines via AWS SageMaker or GCP.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODEL TYPES -->
+<section>
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Model Categories</div>
+      <h2 class="section-title">Every Type of AI Model</h2>
+    </div>
+    <div class="model-grid">
+      <div class="model-card reveal">
+        <div class="model-icon">🗣️</div>
+        <h3>Large Language Models</h3>
+        <p>Custom GPT-based models for document Q&A, code generation, and business automation.</p>
+        <span class="model-tag">NLP</span>
+      </div>
+      <div class="model-card reveal">
+        <div class="model-icon">📷</div>
+        <h3>Image Recognition</h3>
+        <p>Classify products, detect defects, identify faces, and analyze medical imagery.</p>
+        <span class="model-tag">Computer Vision</span>
+      </div>
+      <div class="model-card reveal">
+        <div class="model-icon">📊</div>
+        <h3>Forecasting Models</h3>
+        <p>Time-series models for demand, revenue, inventory, and risk prediction.</p>
+        <span class="model-tag">ML</span>
+      </div>
+      <div class="model-card reveal">
+        <div class="model-icon">🎯</div>
+        <h3>Recommendation Engines</h3>
+        <p>Personalized product, content, and service recommendations like Netflix and Amazon.</p>
+        <span class="model-tag">Deep Learning</span>
+      </div>
+      <div class="model-card reveal">
+        <div class="model-icon">🔍</div>
+        <h3>Anomaly Detection</h3>
+        <p>Flag fraud, security threats, equipment failures, and unusual patterns in real-time.</p>
+        <span class="model-tag">ML</span>
+      </div>
+      <div class="model-card reveal">
+        <div class="model-icon">🎨</div>
+        <h3>Generative AI</h3>
+        <p>Image generation, product design, content creation, and data augmentation with diffusion models.</p>
+        <span class="model-tag">GenAI</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE -->
+<section>
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">ML Pipeline</div>
+      <h2 class="section-title">From Raw Data to Live Model</h2>
+      <p class="section-sub">Our proven ML development pipeline ensures models that actually perform in production.</p>
+    </div>
+    <div class="pipeline reveal">
+      <div class="pipe-step">
+        <div class="pipe-icon">📦</div>
+        <h4>Data Collection</h4>
+        <p>Gather & label your data</p>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step">
+        <div class="pipe-icon">🔬</div>
+        <h4>EDA & Preprocessing</h4>
+        <p>Clean, analyze, engineer features</p>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step">
+        <div class="pipe-icon">🧠</div>
+        <h4>Model Training</h4>
+        <p>Train & fine-tune architectures</p>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step">
+        <div class="pipe-icon">📏</div>
+        <h4>Evaluation</h4>
+        <p>Accuracy, precision, recall, F1</p>
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step">
+        <div class="pipe-icon">🚀</div>
+        <h4>Deployment</h4>
+        <p>REST API + monitoring in prod</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section>
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">How We Work</div>
+      <h2 class="section-title">Our Development Process</h2>
+    </div>
+    <div class="process-grid">
+      <div class="process-step reveal">
+        <div class="step-num">01</div>
+        <h3>Problem Definition</h3>
+        <p>Define the business problem, success metrics, and data requirements before any code is written.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="step-num">02</div>
+        <h3>Data Audit</h3>
+        <p>Assess your existing data — quality, quantity, labeling needs — and build a data strategy.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="step-num">03</div>
+        <h3>Proof of Concept</h3>
+        <p>Build a quick MVP model to validate feasibility and demonstrate value before full build.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="step-num">04</div>
+        <h3>Full Training & Optimization</h3>
+        <p>Train final model with hyperparameter tuning, ensemble methods, and rigorous testing.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="step-num">05</div>
+        <h3>Production Deployment</h3>
+        <p>Deploy as a REST API with monitoring, logging, and auto-scaling infrastructure.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="step-num">06</div>
+        <h3>Continuous Improvement</h3>
+        <p>Monitor model drift, retrain on new data, and improve accuracy over time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section>
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Tech Stack</div>
+      <h2 class="section-title">Industry-Standard ML Tools</h2>
+      <p class="section-sub">We work with the tools that power AI at Google, Meta, and OpenAI.</p>
+      <div class="tools-wrap">
+        <span class="tool-chip">Python</span>
+        <span class="tool-chip">TensorFlow</span>
+        <span class="tool-chip">PyTorch</span>
+        <span class="tool-chip">HuggingFace Transformers</span>
+        <span class="tool-chip">LangChain</span>
+        <span class="tool-chip">scikit-learn</span>
+        <span class="tool-chip">OpenAI API</span>
+        <span class="tool-chip">AWS SageMaker</span>
+        <span class="tool-chip">Google Vertex AI</span>
+        <span class="tool-chip">MLflow</span>
+        <span class="tool-chip">Weights & Biases</span>
+        <span class="tool-chip">FastAPI</span>
+        <span class="tool-chip">Docker</span>
+        <span class="tool-chip">Kubernetes</span>
+        <span class="tool-chip">Pinecone</span>
+        <span class="tool-chip">FAISS</span>
+        <span class="tool-chip">Pandas / NumPy</span>
+        <span class="tool-chip">CUDA / GPU Training</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-title">Invest in Intelligence</h2>
+      <p class="section-sub" style="margin:0 auto">Custom AI is an investment with measurable ROI. We make it accessible.</p>
+    </div>
+    <div class="pricing-grid">
+      <!-- Basic -->
+      <div class="price-card reveal">
+        <div class="price-name">Basic</div>
+        <div class="price-amount">$999<span> project</span></div>
+        <p class="price-desc">Ideal for simple classification, regression, or NLP models with your existing labeled data.</p>
+        <ul class="price-features">
+          <li>1 ML model (classification / regression)</li>
+          <li>Data preprocessing & cleaning</li>
+          <li>Model training & evaluation</li>
+          <li>REST API endpoint</li>
+          <li>Performance report</li>
+          <li class="no">Custom architecture design</li>
+          <li class="no">LLM fine-tuning</li>
+          <li class="no">MLOps / CI-CD pipeline</li>
+        </ul>
+        <a href="https://wa.me/923161473803?text=Hi%20Zynqora%2C%20I%20want%20the%20Basic%20AI%20Model%20package!" class="price-btn outline" target="_blank">Get Started</a>
+      </div>
+      <!-- Standard -->
+      <div class="price-card popular reveal">
+        <div class="popular-badge">Most Popular</div>
+        <div class="price-name">Standard</div>
+        <div class="price-amount">$2,499<span> project</span></div>
+        <p class="price-desc">Advanced models with LLM fine-tuning, computer vision, or complex predictive systems.</p>
+        <ul class="price-features">
+          <li>Up to 3 models or 1 complex system</li>
+          <li>LLM fine-tuning (GPT / LLaMA)</li>
+          <li>Custom architecture design</li>
+          <li>Scalable API + Docker deployment</li>
+          <li>MLflow experiment tracking</li>
+          <li>Model monitoring dashboard</li>
+          <li>1 month post-launch support</li>
+          <li class="no">Full MLOps pipeline</li>
+        </ul>
+        <a href="https://wa.me/923161473803?text=Hi%20Zynqora%2C%20I%20want%20the%20Standard%20AI%20Model%20package!" class="price-btn filled" target="_blank">Get Started</a>
+      </div>
+      <!-- Enterprise -->
+      <div class="price-card reveal">
+        <div class="price-name">Enterprise</div>
+        <div class="price-amount" style="font-size:2rem">Custom<span></span></div>
+        <p class="price-desc">Large-scale AI systems, full MLOps pipelines, and ongoing model development programs.</p>
+        <ul class="price-features">
+          <li>Unlimited models & iterations</li>
+          <li>Full MLOps CI/CD pipeline</li>
+          <li>GPU cloud training infrastructure</li>
+          <li>Auto-retraining on new data</li>
+          <li>A/B testing framework</li>
+          <li>Dedicated ML engineer</li>
+          <li>SLA-backed uptime guarantee</li>
+          <li>Ongoing model optimization</li>
+        </ul>
+        <a href="https://wa.me/923161473803?text=Hi%20Zynqora%2C%20I%20need%20Enterprise%20AI%20Model%20development!" class="price-btn custom" target="_blank">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY ZYNQORA -->
+<section>
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="section-label">Why Zynqora</div>
+      <h2 class="section-title">Research-Grade AI, Business-Ready Output</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <div class="why-icon">🎯</div>
+        <h3>Business-First Approach</h3>
+        <p>We optimize for business KPIs, not just model accuracy. Every model ships with an ROI analysis.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon">🔐</div>
+        <h3>Your Data Stays Yours</h3>
+        <p>Full IP ownership. Your data never leaves your environment. We sign strict NDAs before any engagement.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon">⚡</div>
+        <h3>Production-Ready Code</h3>
+        <p>Not Jupyter notebooks. Clean, maintainable Python with tests, docs, and CI/CD pipelines.</p>
+      </div>
+      <div class="why-card reveal">
+        <div class="why-icon">🔄</div>
+        <h3>Continuous Learning</h3>
+        <p>Models that improve over time. We build auto-retraining pipelines so accuracy compounds.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-box reveal">
+      <h2>Let's Build AI That<br>Actually Moves the Needle</h2>
+      <p>Free 30-minute technical discovery call. We'll scope your project and show you what's possible.</p>
+      <div class="cta-btns">
+        <a href="https://wa.me/923161473803?text=Hi%20Zynqora%2C%20I%20want%20to%20discuss%20a%20custom%20AI%20model%20project!" class="btn-primary" target="_blank">Book Discovery Call</a>
+        <a href="../index.html#contact" class="btn-ghost">Send a Message</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a href="../index.html" class="logo">Zynqora</a>
+    <div class="footer-links">
+      <a href="./web-development.html">Web Dev</a>
+      <a href="./seo-marketing.html">SEO</a>
+      <a href="./app-development.html">App Dev</a>
+      <a href="./flutter-development.html">Flutter</a>
+      <a href="./ai-tools.html">AI Tools</a>
+      <a href="./ai-bots.html">AI Bots</a>
+      <a href="./ai-models.html">AI Models</a>
+      <a href="./ui-ux-design.html">UI/UX</a>
+    </div>
+    <div class="footer-copy">© 2025 Zynqora. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+for(let i=0;i<12;i++){const p=document.createElement('div');p.className='particle';const s=Math.random()*5+3;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}vw;background:${Math.random()>.5?'rgba(0,229,255,.3)':'rgba(124,58,237,.3)'};animation-duration:${Math.random()*20+15}s;animation-delay:-${Math.random()*25}s`;document.body.appendChild(p)}
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+const ham=document.getElementById('ham'),mob=document.getElementById('mob');
+ham.addEventListener('click',()=>{ham.classList.toggle('open');mob.classList.toggle('open')});
+</script>
+</body>
+</html>
